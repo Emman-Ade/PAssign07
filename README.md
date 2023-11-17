@@ -1,9 +1,9 @@
-/**File: PAssign07.java
+/**File: PAssign08.java
  * Class: CSCI 1302
  * Author: Emmanuel Adeniyi
  * Created on : Oct 31, 2023
- * Last Updated on: Nov 7, 2023
- * Description: Creating a IPhone keypad using KeyPadPane class as base
+ * Last Updated on: Nov 17, 2023
+ * Description: Creating a IPhone keypad using KeyPadPane class as base, and creating a KeyPadCustomPane to add further user interaction
    Link to Github: https://github.com/Emman-Ade/hello-world
  */
 package keypad;
@@ -22,16 +22,18 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.scene.control.TextField;
 
-public class PAssign07 extends Application {
+
+public class PAssign08 extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws MalformedURLException {
 
 		//label that will hold our phone Number values
 		Label lbNumbers = new Label();
-		//using our KeyPadPane class as a base for our phone number keypad
-		KeyPadPane keypad = new KeyPadPane();
+		//new code: creating a KeyPadCustomPane that has our info from KeyPadPane and our new custom pane we created
+		KeyPadCustomPane keypad = new KeyCustomPane();
 		//using a GridPane to display our values
 		GridPane main = new GridPane();
 		//creating a File that contains a phone Image, and displaying in our ImageView
@@ -111,6 +113,9 @@ public class PAssign07 extends Application {
 		main.add(buttonBack, 6, 3,3,1);
 		main.add(viewCall, 1, 4,4,1);
 		main.add(lbNumbers, 5, 5, 5,1);
+  
+  		//new Code: adding our new KeyPad elements to our GridPane
+  		main.add(keypad,7,6,3,5);
 
 		//creating a scene to hold GridPane, with our desired size
 		Scene scene = new Scene(main,400,400);
@@ -127,3 +132,78 @@ public class PAssign07 extends Application {
 		launch(args);
 	}
 }
+
+//new code, creating a custom keypad that adds contacts
+class KeyPadCustomPane extends KeyPadPane{
+	//initalizing textfields to input data
+	private TextField contactTxt;
+	private TextField numberTxt;
+
+	//default constructor that calls createInfo and createContacts method so we can have access to them in PAssign08
+	public KeyPadCustomPane() {
+		createInfo();
+		createContacts();
+	}
+	private void createInfo() {
+		//creating our textfields
+		contactTxt = new TextField();
+		numberTxt = new TextField();
+
+		//setting the width so it can be large enough for users
+		contactTxt.setMinWidth(200);
+		contactTxt.setMaxWidth(Double.MAX_VALUE);
+		contactTxt.setPrefWidth(200);
+
+		numberTxt.setMinWidth(200);
+		numberTxt.setMaxWidth(Double.MAX_VALUE);
+		numberTxt.setPrefWidth(200);
+	}
+
+	//creating our contacts
+	private void createContacts() {
+		//label that shows our contacts
+		Label lbContacts = new Label();
+
+		//adding all our new elements to our keypad using this, and with proper formatting
+		this.add(new Label("Contact Name: "),0,6);
+		this.add(new Label("Phone Number: "),0,7);
+		this.add(contactTxt,1,6,2,1);
+		this.add(numberTxt,1,7,2,1);
+		this.add(lbContacts, 0, 9, 3, 1);
+		Button buttonContact = new Button("Add Contact");
+		this.add(buttonContact,0,8,2,1);
+
+		//Action Event if button is pressed
+		buttonContact.setOnAction(e ->{
+
+			//getting the text from contactTxt and numberTxt
+			String contactName = contactTxt.getText();
+			String contactNumber = numberTxt.getText();
+
+			//error checking if any information is inputed by user
+			if(contactName != null && contactNumber != null && !contactName.isEmpty() && !contactNumber.isEmpty()) {
+				//call allContacts method to print it to main console
+				allContacts(contactName, contactNumber);
+
+				//set the text for lbContacts to print info to GUI Application
+				lbContacts.setText("Contact Name: " + contactName + "\nContact Number: " + contactNumber);
+			}else {
+				//if nothing is inputed give this message
+				lbContacts.setText("Insert name and number");
+			}
+
+			//after button is pressed it clears the contents of the two textfields
+			contactTxt.clear();
+			numberTxt.clear();
+		});
+	}
+
+	//allContacts method for printing out our information to java
+	private void allContacts(String contactName, String contactNumber) {
+		System.out.println("Contact Name: " + contactName);
+		System.out.println("Contact Number: " + contactNumber);
+	}
+
+
+}
+
